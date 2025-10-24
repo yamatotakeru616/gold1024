@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from .scenario_parser import ParsedScenario
+from scenario_parser import ParsedScenario
 
 
 class ChartRenderer:
