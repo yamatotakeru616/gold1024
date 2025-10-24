@@ -1,0 +1,101 @@
+[project]
+name = "gold1024"
+version = "0.1.0"
+description = "市場分析システム - シナリオベースの金市場分析ツール"
+authors = [
+    {name = "yamatotakeru616"}
+]
+readme = "readme_complete.md"
+requires-python = ">=3.10"
+dependencies = [
+    "PyQt6>=6.6.0",
+    "plotly>=5.18.0",
+    "yfinance>=0.2.32",
+    "pandas>=2.1.0",
+    "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "bandit>=1.7.5",
+    "pdoc3>=0.10.0",
+]
+jupyter = [
+    "jupyter>=1.0.0",
+    "jupyterlab>=4.0.0",
+    "ipykernel>=6.25.0",
+    "ipywidgets>=8.1.0",
+    "notebook>=7.0.0",
+]
+
+[project.scripts]
+gold-analyze = "main_app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py", "*_test.py", "unit_tests.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov=.",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
