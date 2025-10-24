@@ -82,13 +82,13 @@ class ChartRenderer:
             template="plotly_white",
             height=800,
             showlegend=True,
-            legend=dict(
-                yanchor="top",
-                y=0.99,
-                xanchor="left",
-                x=0.01,
-                bgcolor="rgba(255, 255, 255, 0.8)",
-            ),
+            legend={
+                "yanchor": "top",
+                "y": 0.99,
+                "xanchor": "left",
+                "x": 0.01,
+                "bgcolor": "rgba(255, 255, 255, 0.8)",
+            },
         )
 
         # X軸の設定（日時範囲の自動調整）
@@ -214,7 +214,7 @@ class ChartRenderer:
                 x=[df.index[0], df.index[-1]],
                 y=[price, price],
                 mode="lines",
-                line=dict(color=color, width=2, dash="dash"),
+                line={"color": color, "width": 2, "dash": "dash"},
                 name=name,
                 hovertemplate=f"<b>{name}</b><br>{description}<br>価格: %{{y:.2f}}<extra></extra>",
                 showlegend=True,
@@ -252,7 +252,7 @@ class ChartRenderer:
                 ],
                 fill="toself",
                 fillcolor=color,
-                line=dict(width=0),
+                line={"width": 0},
                 name=name,
                 hovertemplate=f"<b>{name}</b><extra></extra>",
                 showlegend=True,
