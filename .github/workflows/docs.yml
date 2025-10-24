@@ -1,0 +1,45 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.py'
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pdoc3 PyQt6 plotly yfinance pandas numpy
+
+    - name: Generate API Documentation
+      run: |
+        pdoc --html --output-dir docs \
+          scenario_parser.py \
+          database_manager.py \
+          chart_renderer.py \
+          data_fetcher.py \
+          main_app.py
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        publish_branch: gh-pages

@@ -1,0 +1,128 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov ruff mypy
+        pip install PyQt6 plotly yfinance pandas numpy
+
+    - name: Lint with Ruff
+      run: |
+        # チェックのみ（自動修正なし）
+        ruff check . --output-format=github
+      continue-on-error: true
+
+    - name: Type check with mypy
+      run: |
+        mypy --install-types --non-interactive --ignore-missing-imports *.py
+      continue-on-error: true
+
+    - name: Run tests with pytest
+      run: |
+        pytest unit_tests.py -v --cov=. --cov-report=xml --cov-report=term
+      continue-on-error: false
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
+      if: matrix.python-version == '3.11'
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Ruff
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff
+
+    - name: Check code formatting
+      run: |
+        ruff format --check .
+
+    - name: Security check
+      run: |
+        pip install bandit
+        bandit -r . -f json -o bandit-report.json || true
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v4
+      with:
+        name: bandit-security-report
+        path: bandit-report.json
+      if: always()
+
+  build-check:
+    name: Build Verification
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.11']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PyQt6 plotly yfinance pandas numpy
+
+    - name: Verify imports
+      run: |
+        python -c "import sys; print(f'Python {sys.version}')"
+        python -c "import PyQt6; print('PyQt6 OK')"
+        python -c "import plotly; print('Plotly OK')"
+        python -c "import yfinance; print('yfinance OK')"
+        python -c "import pandas; print('Pandas OK')"
+
+    - name: Check module syntax
+      run: |
+        python -m py_compile scenario_parser.py
+        python -m py_compile database_manager.py
+        python -m py_compile chart_renderer.py
+        python -m py_compile data_fetcher.py
+        python -m py_compile main_app.py

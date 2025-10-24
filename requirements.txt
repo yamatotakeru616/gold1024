@@ -1,0 +1,15 @@
+PyQt6>=6.6.0
+plotly>=5.18.0
+yfinance>=0.2.32
+pandas>=2.1.0
+numpy>=1.26.0
+
+# Development
+pytest>=7.4.0
+pytest-cov>=4.1.0
+ruff>=0.1.0
+mypy>=1.7.0
+bandit>=1.7.5
+
+# Documentation
+pdoc3>=0.10.0
