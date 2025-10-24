@@ -23,10 +23,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from modules.chart_renderer import ChartRenderer
-from modules.data_fetcher import DataFetcher
-from modules.database import DatabaseManager
-from modules.scenario_parser import ScenarioParser
+from chart_renderer import ChartRenderer
+from data_fetcher import DataFetcher
+from database_manager import DatabaseManager
+from scenario_parser import ScenarioParser
 
 
 class MainWindow(QMainWindow):
