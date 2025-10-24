@@ -6,6 +6,7 @@ PyQt6を使用したGUIアプリケーション。
 import sys
 from datetime import datetime
 
+import pandas as pd
 from PyQt6.QtCore import Qt
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
@@ -23,10 +24,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from modules.chart_renderer import ChartRenderer
-from modules.data_fetcher import DataFetcher
-from modules.database import DatabaseManager
-from modules.scenario_parser import ScenarioParser
+from chart_renderer import ChartRenderer
+from data_fetcher import DataFetcher
+from database_manager import DatabaseManager
+from scenario_parser import ScenarioParser
 
 
 class MainWindow(QMainWindow):
@@ -249,7 +250,7 @@ class MainWindow(QMainWindow):
                 f"{self.data_fetcher.get_symbol_name(scenario['symbol'])}"
             )
 
-            item_widget = self.scenario_list.addItem(display_text)
+            self.scenario_list.addItem(display_text)
             # IDをデータとして保存
             item = self.scenario_list.item(self.scenario_list.count() - 1)
             item.setData(Qt.ItemDataRole.UserRole, scenario["id"])
@@ -296,7 +297,7 @@ class MainWindow(QMainWindow):
 
         # シナリオデータを再構築
         parsed_data = scenario_data["parsed_data"]
-        from modules.scenario_parser import ParsedScenario, PriceLevel, PriceZone
+        from scenario_parser import ParsedScenario, PriceLevel, PriceZone
 
         loaded_scenario = ParsedScenario(
             raw_text=parsed_data["raw_text"],
@@ -349,7 +350,6 @@ class MainWindow(QMainWindow):
             )
 
         # 検証チャートの作成
-        symbol_name = self.data_fetcher.get_symbol_name(scenario_data["symbol"])
         fig = self.chart_renderer.create_verification_chart(
             historical_df=historical_df,
             future_df=future_df,

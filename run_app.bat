@@ -1,0 +1,3 @@
+@echo off
+echo 市場分析システムを起動しています...
+.venv\Scripts\python.exe main_app.py
